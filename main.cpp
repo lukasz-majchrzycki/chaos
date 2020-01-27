@@ -3,8 +3,10 @@
 #include <GL/glu.h>
 #include <stdio.h>
 
-int mx=4,my=2;
-int szer=450,wys=450;
+int mx=4;
+float my=1.1;
+int szer=440,wys=540;
+int szerGl=400, wysGl=400;
 
 int step=0,rys=0;
 
@@ -18,7 +20,7 @@ void Render();
 
 static HDC hdc;
 static HGLRC hrc;
-HWND hwnd,anim_hwnd,pocz_hwnd;
+HWND hwnd,anim_hwnd,pocz_hwnd, area_hwnd;
 UINT timer;
 
 int anim=0;
@@ -133,23 +135,28 @@ static PAINTSTRUCT ps;
                      GetModuleHandle(NULL),NULL);
      pocz_hwnd=CreateWindow("EDIT","0.5",
                      ES_RIGHT | WS_CHILD |WS_VISIBLE|WS_BORDER,
-                     160,250,50,17,
+                     250,10,50,17,
                      (HWND)hwnd,(HMENU)200,
                      GetModuleHandle(NULL),NULL);
                CreateWindow("EDIT","Wartoœæ pocz¹tkowa :",
                      ES_RIGHT | WS_CHILD |WS_VISIBLE|WS_BORDER|WS_DISABLED,
-                     10,250,150,17,
+                     90,10,150,17,
                      (HWND)hwnd,(HMENU)200,
                      GetModuleHandle(NULL),NULL);
                CreateWindow("BUTTON", "Tylko aktualna iteracja",
                      BS_PUSHBUTTON|WS_CHILD|WS_VISIBLE|BS_AUTOCHECKBOX,
-                     10,275,170,22,
+                     90,35,170,22,
                      (HWND)hwnd,(HMENU)210,
                      GetModuleHandle(NULL),NULL);
+            area_hwnd=CreateWindow("BUTTON", "",
+            		WS_CHILD | WS_CLIPCHILDREN | WS_VISIBLE,
+                     10,90,szerGl,wysGl,
+                     (HWND)hwnd,NULL,
+					 GetModuleHandle(NULL),NULL);
 
 
 
-        hdc = GetDC( hwnd );
+        hdc = GetDC( area_hwnd );
         SetDCPixelFormat( hdc );
         hrc = wglCreateContext( hdc );
         wglMakeCurrent( hdc, hrc );
@@ -221,10 +228,10 @@ static PAINTSTRUCT ps;
 void Render()
 {
 float i,j;
-    glViewport(0,0,szer,wys);
+    glViewport(0,0,szerGl,wysGl);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(-1, mx+1,-my, my );
+    gluOrtho2D(-1, mx+1,0, my );
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
