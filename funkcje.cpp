@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern int mx,my;
+extern int mx;
 extern HWND hwnd,pocz_hwnd;
 extern int step,rys;
 
@@ -62,12 +62,13 @@ else kp=1;
   for(i=0,j=dt;i<ile;i++,j+=dt)
   {
 
-    if(2*k/maxp<0.5)
-     glColor3f(1.0f,(float)2*k/maxp,0.0f);
-    else
-     glColor3f(0.0f,(float)2*k/maxp,0.0f);
-
-     glVertex3f(j,T[i][k],0.0f);
+    if(2*k/maxp<0.5){
+    	glColor3f(1.0f,(float)2*k/maxp,0.0f);
+    }
+    else{
+    	glColor3f(0.0f,(float)2*k/maxp,0.0f);
+    }
+    glVertex3f(j,T[i][k],0.0f);
    }
    glEnd();
   }
@@ -77,9 +78,9 @@ else kp=1;
 void osobniki()
 {
 char str[500];
-   sprintf(str,"x=%f\ty=%f",0.0,T[0][step-1]);
+   sprintf(str,"x=%f\ty=%f",0.0,T[0][step==0?0:step-1]);
    for(int i=40;i<ile;i+=400)
-    sprintf(str,"%s\nx=%f\ty=%f",str,i*dt,T[i][step-1]);
+    sprintf(str,"%s\nx=%f\ty=%f",str,i*dt,T[i][step==0?0:step-1]);
 
    MessageBox(NULL, str , "Chaos",MB_OK);
 }

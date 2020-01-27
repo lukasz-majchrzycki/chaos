@@ -12,6 +12,7 @@ int step=0,rys=0;
 
 extern void krok();
 extern void zaznacz();
+extern void first();
 
 extern void osobniki();
 
@@ -39,14 +40,14 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,PSTR szCmdLine,in
  okno.hbrBackground  =(HBRUSH)(COLOR_BTNFACE+1);
  okno.lpszMenuName	= NULL;     // wska¿nik do menu okna
  okno.lpfnWndProc=obsluga_kom;
- okno.lpszClassName="okienko";
+ okno.lpszClassName="window";
 
  if(!RegisterClass(&okno)){
-			MessageBox(NULL,"Nie uda³o siê zarejestrowaæ klasy okna","B£¥D",MB_ICONERROR);
+			MessageBox(NULL,"Error during window registration","ERROR",MB_ICONERROR);
 		}
 
- hwnd=CreateWindow(	"okienko",     					//nazwa klasy okna
-						"Ekstremum funkcji",                      //nag³ówek okna
+ hwnd=CreateWindow(	"window",     					//nazwa klasy okna
+						"Deterministic chaos",                      //nag³ówek okna
 						WS_OVERLAPPEDWINDOW,            // styl okna
 						CW_USEDEFAULT,CW_USEDEFAULT,  // pocz¹tkowa pozycja x,y
 						szer,wys,  // pocz¹tkowy rozmiar x,y
@@ -108,17 +109,17 @@ static PAINTSTRUCT ps;
 	{
 		case WM_CREATE:
   
-               CreateWindow("BUTTON", "Ruch +1",
+               CreateWindow("BUTTON", "Step +1",
                      BS_PUSHBUTTON|WS_CHILD|WS_VISIBLE,
                      10,10,70,22,
                      (HWND)hwnd,(HMENU)101,
                      GetModuleHandle(NULL),NULL);
-               CreateWindow("BUTTON", "Ruch +10",
+               CreateWindow("BUTTON", "Step +10",
                      BS_PUSHBUTTON|WS_CHILD|WS_VISIBLE,
                      10,35,70,22,
                      (HWND)hwnd,(HMENU)102,
                      GetModuleHandle(NULL),NULL);
-     anim_hwnd=CreateWindow("BUTTON", "Animuj",
+     anim_hwnd=CreateWindow("BUTTON", "Animate",
                      BS_PUSHBUTTON|WS_CHILD|WS_VISIBLE,
                      10,60,70,22,
                      (HWND)hwnd,(HMENU)106,
@@ -128,7 +129,7 @@ static PAINTSTRUCT ps;
                      szer-90,10,70,22,
                      (HWND)hwnd,(HMENU)105,
                      GetModuleHandle(NULL),NULL);
-               CreateWindow("BUTTON", "Wartoœci",
+               CreateWindow("BUTTON", "Values",
                      BS_PUSHBUTTON|WS_CHILD|WS_VISIBLE,
                      szer-90,35,70,22,
                      (HWND)hwnd,(HMENU)104,
@@ -138,12 +139,12 @@ static PAINTSTRUCT ps;
                      250,10,50,17,
                      (HWND)hwnd,(HMENU)200,
                      GetModuleHandle(NULL),NULL);
-               CreateWindow("EDIT","Wartoœæ pocz¹tkowa :",
+               CreateWindow("EDIT","Starting value :",
                      ES_RIGHT | WS_CHILD |WS_VISIBLE|WS_BORDER|WS_DISABLED,
                      90,10,150,17,
                      (HWND)hwnd,(HMENU)200,
                      GetModuleHandle(NULL),NULL);
-               CreateWindow("BUTTON", "Tylko aktualna iteracja",
+               CreateWindow("BUTTON", "Only recent iteration",
                      BS_PUSHBUTTON|WS_CHILD|WS_VISIBLE|BS_AUTOCHECKBOX,
                      90,35,170,22,
                      (HWND)hwnd,(HMENU)210,
@@ -160,6 +161,7 @@ static PAINTSTRUCT ps;
         SetDCPixelFormat( hdc );
         hrc = wglCreateContext( hdc );
         wglMakeCurrent( hdc, hrc );
+        first();
         break;
 
         case WM_CLOSE:
@@ -211,7 +213,7 @@ static PAINTSTRUCT ps;
                 {
                  anim=0;
                  KillTimer(hwnd,timer);
-                 SetWindowText(anim_hwnd,"Animuj");
+                 SetWindowText(anim_hwnd,"Animate");
                 }
             break;
             case 210:
@@ -219,15 +221,13 @@ static PAINTSTRUCT ps;
             break;
             }
         break;
-
-
- default: return DefWindowProc(hwnd,message,wParam,lParam);
+        default: return DefWindowProc(hwnd,message,wParam,lParam);
  }
+	return 0;
 }
 
 void Render()
 {
-float i,j;
     glViewport(0,0,szerGl,wysGl);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
